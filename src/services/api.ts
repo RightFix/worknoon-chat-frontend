@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import type { AuthResponse, ApiResponse, User, Conversation, Message, RegisterInput, LoginInput } from '../types';
+import { getCookie, removeCookie } from '../utils/cookies';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -11,7 +12,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = getCookie('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,8 +23,8 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      removeCookie('token');
+      removeCookie('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -69,6 +70,11 @@ export const userAPI = {
 
   updateUser: async (id: string, data: Partial<User>): Promise<ApiResponse<User>> => {
     const response = await api.put<ApiResponse<User>>(`/users/${id}`, data);
+    return response.data;
+  },
+
+  updateUserRole: async (id: string, role: string): Promise<ApiResponse<User>> => {
+    const response = await api.patch<ApiResponse<User>>(`/users/${id}/role`, { role });
     return response.data;
   },
 

@@ -19,6 +19,8 @@ const AdminDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('');
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -50,6 +52,21 @@ const AdminDashboard: React.FC = () => {
     }, 300);
     return () => clearTimeout(debounce);
   }, [searchQuery]);
+
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    setUpdatingRoleId(userId);
+    try {
+      const response = await userAPI.updateUserRole(userId, newRole);
+      if (response.success && response.data) {
+        setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as UserType['role'] } : u));
+        setEditingUserId(null);
+      }
+    } catch (error) {
+      console.error('Error updating role:', error);
+    } finally {
+      setUpdatingRoleId(null);
+    }
+  };
 
   if (!user || (user.role !== 'admin' && user.role !== 'agent')) {
     return <Navigate to="/" replace />;
@@ -164,18 +181,21 @@ const AdminDashboard: React.FC = () => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Joined
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-dark-border">
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center">
+                  <td colSpan={5} className="px-4 py-8 text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto" />
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                     No users found
                   </td>
                 </tr>
@@ -203,6 +223,40 @@ const AdminDashboard: React.FC = () => {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                       {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {user?.role === 'admin' && u.id !== user.id && (
+                        editingUserId === u.id ? (
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={u.role}
+                              onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                              disabled={updatingRoleId === u.id}
+                              className="text-sm px-2 py-1 rounded border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-input text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                            >
+                              {roles.map((role) => (
+                                <option key={role} value={role}>
+                                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              onClick={() => setEditingUserId(null)}
+                              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                              disabled={updatingRoleId === u.id}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setEditingUserId(u.id)}
+                            className="text-sm text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                          >
+                            Edit Role
+                          </button>
+                        )
+                      )}
                     </td>
                   </tr>
                 ))

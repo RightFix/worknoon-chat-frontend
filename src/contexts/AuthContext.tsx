@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { User, LoginInput, RegisterInput } from '../types';
 import { authAPI } from '../services/api';
+import { getCookie, getCookieJSON, setCookie, setCookieJSON, removeCookie } from '../utils/cookies';
 
 interface AuthContextType {
   user: User | null;
@@ -21,8 +22,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken = getCookie('token');
+    const storedUser = getCookieJSON<User>('user');
 
     if (!storedToken || !storedUser) {
       setIsLoading(false);
@@ -30,17 +31,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     setToken(storedToken);
-    setUser(JSON.parse(storedUser));
+    setUser(storedUser);
 
     try {
       const response = await authAPI.getMe();
       if (response.success && response.data?.user) {
         setUser(response.data.user);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setCookieJSON('user', response.data.user);
       }
     } catch {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      removeCookie('token');
+      removeCookie('user');
       setToken(null);
       setUser(null);
     } finally {
@@ -58,8 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user: userData, token: authToken } = response.data;
       setUser(userData);
       setToken(authToken);
-      localStorage.setItem('token', authToken);
-      localStorage.setItem('user', JSON.stringify(userData));
+      setCookie('token', authToken, 7);
+      setCookieJSON('user', userData, 7);
     } else {
       throw new Error(response.message || 'Login failed');
     }
@@ -71,8 +72,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user: userData, token: authToken } = response.data;
       setUser(userData);
       setToken(authToken);
-      localStorage.setItem('token', authToken);
-      localStorage.setItem('user', JSON.stringify(userData));
+      setCookie('token', authToken, 7);
+      setCookieJSON('user', userData, 7);
     } else {
       throw new Error(response.message || 'Registration failed');
     }
@@ -86,14 +87,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setUser(null);
       setToken(null);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      removeCookie('token');
+      removeCookie('user');
     }
   };
 
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setCookieJSON('user', updatedUser, 7);
   };
 
   return (

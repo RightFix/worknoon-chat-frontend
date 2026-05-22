@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { getCookie, setCookie } from '../utils/cookies';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -13,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mode, setModeState] = useState<ThemeMode>(() => {
-    const stored = localStorage.getItem('theme');
+    const stored = getCookie('theme');
     return (stored as ThemeMode) || 'light';
   });
 
@@ -26,13 +27,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('theme', mode);
+    setCookie('theme', mode, 365);
   }, [mode, isDark]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
-      const stored = localStorage.getItem('theme');
+      const stored = getCookie('theme');
       if (!stored) {
         setModeState(e.matches ? 'dark' : 'light');
       }
