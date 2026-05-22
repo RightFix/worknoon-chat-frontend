@@ -10,6 +10,7 @@ export const RegisterForm: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -18,7 +19,7 @@ export const RegisterForm: React.FC = () => {
     role: 'customer' as UserRole,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
+  const [confirmPassword, setConfirmPassword] = useState('');
   const roles: { value: UserRole; label: string }[] = [
     { value: 'customer', label: 'Customer' },
     { value: 'merchant', label: 'Merchant' },
@@ -33,6 +34,7 @@ export const RegisterForm: React.FC = () => {
     else if (formData.username.length < 3) newErrors.username = 'Username must be at least 3 characters';
     if (!formData.password) newErrors.password = 'Password is required';
     else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    else if (formData.password !== confirmPassword) newErrors.password = 'Password and Confirm Password are not the same';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -99,6 +101,24 @@ export const RegisterForm: React.FC = () => {
                 className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+
+             <div className="relative">
+              <Input
+                label="ConfirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e)=> setConfirmPassword(e.target.value)}
+                leftIcon={<Lock className="w-5 h-5" />}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
 
