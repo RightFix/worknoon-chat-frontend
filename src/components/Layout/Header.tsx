@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Moon, Sun, LogOut, User as UserIcon, Settings, MessageCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
-import { Avatar, Button } from '../Common';
+import { Avatar } from '../Common';
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();

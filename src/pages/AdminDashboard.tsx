@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, UserCheck, UserX, BarChart3, Shield } from 'lucide-react';
+import { Users, UserCheck, BarChart3, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { userAPI } from '../services/api';
-import { Avatar, Badge, Button, Input } from '../components/Common';
+import { Avatar, Badge, Input } from '../components/Common';
 import type { User as UserType } from '../types';
 
 interface Stats {

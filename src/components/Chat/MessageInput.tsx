@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Paperclip, Image, X } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { uploadAPI } from '../../services/api';
 import { Button } from '../Common';
 
 interface MessageInputProps {
@@ -15,13 +13,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   onTyping,
   disabled = false,
 }) => {
-  const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (typingTimeoutRef.current) {
@@ -62,7 +59,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
     setIsLoading(true);
     try {
-      const fileType = type === 'image' ? 'image/' : '';
       const validFiles = files.filter((f) =>
         type === 'image' ? f.type.startsWith('image/') : true
       );

@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
-import type { Conversation, Message, User } from '../types';
+import type { Conversation, Message } from '../types';
 import { conversationAPI, messageAPI } from '../services/api';
 import { 
   subscribeToNewMessages, 
   subscribeToTyping,
   subscribeToMessageRead,
   subscribeToUserNotifications
-} from '../services/pusher';
+} from '../services/socket';
 import { useAuth } from './AuthContext';
 
 interface ChatContextType {
@@ -149,7 +149,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const unsubRead = subscribeToMessageRead(currentConversation._id, ({ messageId, userId }) => {
         setMessages(prev => prev.map(msg => 
           msg._id === messageId 
-            ? { ...msg, readBy: [...msg.readBy, userId as User] }
+            ? { ...msg, readBy: [...msg.readBy, userId] }
             : msg
         ));
       });

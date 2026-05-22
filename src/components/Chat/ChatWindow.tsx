@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MoreVertical, Phone, Video, Info } from 'lucide-react';
+import { ArrowLeft, Phone, Video, Info } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useChat } from '../../contexts/ChatContext';
-import { Avatar, Badge } from '../Common';
+import { Avatar } from '../Common';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
 import { TypingIndicator } from './TypingIndicator';
-import type { User } from '../../types';
 
 export const ChatWindow: React.FC = () => {
   const { conversationId } = useParams<{ conversationId: string }>();
@@ -41,7 +40,7 @@ export const ChatWindow: React.FC = () => {
 
   const getOtherParticipant = () => {
     if (!currentConversation?.participants) return null;
-    return currentConversation.participants.find((p) => (p as User)._id !== user?.id) || currentConversation.participants[0] as User;
+    return currentConversation.participants.find((p) => p.id !== user?.id) || currentConversation.participants[0];
   };
 
   const other = getOtherParticipant();
@@ -111,11 +110,13 @@ export const ChatWindow: React.FC = () => {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => {
-          const sender = typeof message.sender === 'string' ? null : message.sender as User;
-          const isOwn = sender?._id === user?.id || sender?.id === user?.id;
+          const sender = typeof message.sender === 'string' ? null : message.sender;
+          const senderId = sender?.id || sender?._id;
+          const isOwn = senderId === user?.id;
           const prevMessage = messages[index - 1];
-          const showAvatar = !prevMessage || 
-            (prevMessage && typeof prevMessage.sender !== 'string' && (prevMessage.sender as User)?._id !== sender?._id);
+          const prevSender = prevMessage && typeof prevMessage.sender !== 'string' ? prevMessage.sender : null;
+          const prevSenderId = prevSender?.id || prevSender?._id;
+          const showAvatar = !prevMessage || prevSenderId !== senderId;
 
           return (
             <MessageBubble

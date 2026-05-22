@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError } from 'axios';
 import type { AuthResponse, ApiResponse, User, Conversation, Message, RegisterInput, LoginInput } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';

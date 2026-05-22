@@ -5,6 +5,7 @@ export type MessageType = 'text' | 'file' | 'image' | 'system';
 export type ConversationType = 'direct' | 'group';
 
 export interface User {
+  _id?: string;
   id: string;
   email: string;
   username: string;

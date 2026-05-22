@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, MessageCircle, Users, BarChart3, Settings, X } from 'lucide-react';
+import { Home, Users, BarChart3, Settings, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useChat } from '../../contexts/ChatContext';
 import { Avatar, Badge } from '../Common';
@@ -16,14 +16,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const { conversations, unreadCount } = useChat();
 
-  const adminLinks = [
+  const adminLinks: { path: string; icon: React.ComponentType<{ className?: string }>; label: string; badge?: number }[] = [
     { path: '/', icon: Home, label: 'Inbox' },
     { path: '/users', icon: Users, label: 'Users' },
     { path: '/admin', icon: BarChart3, label: 'Dashboard' },
     { path: '/settings', icon: Settings, label: 'Settings' },
   ];
 
-  const userLinks = [
+  const userLinks: { path: string; icon: React.ComponentType<{ className?: string }>; label: string; badge?: number }[] = [
     { path: '/', icon: Home, label: 'Inbox', badge: unreadCount > 0 ? unreadCount : undefined },
     { path: '/settings', icon: Settings, label: 'Settings' },
   ];
@@ -31,7 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const links = user?.role === 'admin' || user?.role === 'agent' ? adminLinks : userLinks;
 
   const getOtherParticipant = (participants: any[]) => {
-    return participants.find((p) => p._id !== user?.id) || participants[0];
+    return participants.find((p) => p.id !== user?.id) || participants[0];
   };
 
   return (
