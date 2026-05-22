@@ -106,7 +106,7 @@ export const RegisterForm: React.FC = () => {
 
              <div className="relative">
               <Input
-                label="ConfirmPassword"
+                label="Confirm  Password"
                 type={showConfirmPassword ? 'text' : 'password'}
                 placeholder="Confirm password"
                 value={confirmPassword}
