@@ -50,6 +50,7 @@ export const RegisterForm: React.FC = () => {
       toast.success('Account created successfully!');
       navigate('/');
     } catch (error: any) {
+      console.log(error)
       toast.error(error.message || 'Registration failed');
     } finally {
       setIsLoading(false);
@@ -67,7 +68,7 @@ export const RegisterForm: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Username"
+              label="Username"https://worknoon-chat-frontend-xi.vercel.app/login
               type="text"
               placeholder="Choose a username"
               value={formData.username}
@@ -127,7 +128,7 @@ export const RegisterForm: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 I am a
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {roles.map((role) => (
                   <button
                     key={role.value}
