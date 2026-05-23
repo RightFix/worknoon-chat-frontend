@@ -50,9 +50,9 @@ export const RegisterForm: React.FC = () => {
       toast.success('Account created successfully!');
       navigate('/');
     } catch (error: any) {
-      console.log(error)
       toast.error(error.message || 'Registration failed');
     } finally {
+      console.log(formData);
       setIsLoading(false);
     }
   };
