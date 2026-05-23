@@ -24,6 +24,7 @@ export const RegisterForm: React.FC = () => {
     { value: 'customer', label: 'Customer' },
     { value: 'merchant', label: 'Merchant' },
     { value: 'designer', label: 'Designer' },
+    { value: 'agent', label: 'Agent' },
   ];
 
   const validate = () => {
