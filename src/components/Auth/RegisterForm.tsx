@@ -52,7 +52,7 @@ export const RegisterForm: React.FC = () => {
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
     } finally {
-      console.log(formData);
+        console.log(formData)
       setIsLoading(false);
     }
   };
@@ -68,7 +68,7 @@ export const RegisterForm: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Username"https://worknoon-chat-frontend-xi.vercel.app/login
+              label="Username"
               type="text"
               placeholder="Choose a username"
               value={formData.username}
