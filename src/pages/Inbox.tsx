@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { MessageCircle, Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
@@ -26,15 +26,12 @@ const Inbox: React.FC = () => {
 
   useEffect(() => {
     const searchUsers = async () => {
-      if (searchQuery.trim().length < 2) {
-        setSearchResults([]);
-        return;
-      }
+      
       setIsSearching(true);
       try {
         const response = await userAPI.getUsers({ search: searchQuery });
         if (response.success && response.data) {
-          setSearchResults(response.data.filter((u) => u.id !== user?.id));
+          setSearchResults(response.data.filter((u) => u._id !== user?.id));
         }
       } catch (error) {
         console.error('Error searching users:', error);
@@ -48,6 +45,7 @@ const Inbox: React.FC = () => {
   }, [searchQuery, user?.id]);
 
   const handleStartChat = async (participantId: string) => {
+
     try {
       const conversation = await createConversation(participantId);
       if (conversation) {
@@ -68,7 +66,7 @@ const Inbox: React.FC = () => {
   };
 
   const getOtherParticipant = (participants: User[]) => {
-    return participants.find((p) => p.id !== user?.id) || participants[0];
+    return participants.find((p) => p._id !== user?.id) || participants[0];
   };
 
   return (
@@ -106,7 +104,7 @@ const Inbox: React.FC = () => {
                   {searchResults.map((result) => (
                     <li key={result.id}>
                       <button
-                        onClick={() => handleStartChat(result.id)}
+                        onClick={() => handleStartChat(result._id || '')}
                         className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-input transition-colors"
                       >
                         <Avatar src={result.avatar} alt={result.username} size="md" isOnline={result.isOnline} showStatus />
@@ -145,6 +143,9 @@ const Inbox: React.FC = () => {
                 const other = getOtherParticipant(conv.participants as User[]);
                 return (
                   <li key={conv._id}>
+                    <Link
+                       to={`/chat/${conv._id}`}
+                    >
                     <button
                       onClick={() => handleSelectConversation(conv._id)}
                       className={`w-full flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-dark-input transition-colors ${
@@ -174,7 +175,8 @@ const Inbox: React.FC = () => {
                           )}
                         </div>
                       </div>
-                    </button>
+                      </button>
+                      </Link>
                   </li>
                 );
               })}

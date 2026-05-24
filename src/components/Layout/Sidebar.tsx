@@ -14,7 +14,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user } = useAuth();
-  const { conversations, unreadCount } = useChat();
+  const { conversations, unreadCount, setCurrentConversation } = useChat();
 
   const adminLinks: { path: string; icon: React.ComponentType<{ className?: string }>; label: string; badge?: number }[] = [
     { path: '/', icon: Home, label: 'Inbox' },
@@ -31,7 +31,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const links = user?.role === 'admin' || user?.role === 'agent' ? adminLinks : userLinks;
 
   const getOtherParticipant = (participants: any[]) => {
-    return participants.find((p) => p.id !== user?.id) || participants[0];
+    return participants.find((p) => p._id !== user?.id) || participants[0];
+  };
+
+  const handleSelectConversation = (conversationId: string) => {
+    setCurrentConversation(conversations.find(c => c._id === conversationId) || null);
   };
 
   return (
@@ -95,12 +99,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               {conversations.slice(0, 10).map((conv) => {
                 const other = getOtherParticipant(conv.participants);
                 return (
-                  <li key={conv._id}>
+                  <li key={conv._id}
+                    onClick={() => handleSelectConversation(conv._id)}
+                  >
                     <Link
                       to={`/chat/${conv._id}`}
                       onClick={onClose}
                       className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-input transition-colors"
                     >
+                     
                       <Avatar
                         src={other?.avatar}
                         alt={other?.username}
@@ -129,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                             {conv.unreadCount}
                           </Badge>
                         )}
-                      </div>
+                        </div>
                     </Link>
                   </li>
                 );

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Phone, Video, Info } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -7,6 +7,7 @@ import { Avatar } from '../Common';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
 import { TypingIndicator } from './TypingIndicator';
+import {User} from './../../types'
 
 export const ChatWindow: React.FC = () => {
   const { conversationId } = useParams<{ conversationId: string }>();
@@ -20,14 +21,17 @@ export const ChatWindow: React.FC = () => {
     setCurrentConversation,
     loadMessages, 
     sendMessage,
-    markAllAsRead
+    markAllAsRead,
   } = useChat();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null); 
+  const [other, setCurrentUser] = useState<User>()
+
 
   useEffect(() => {
     if (conversationId) {
       loadMessages(conversationId);
       markAllAsRead(conversationId);
+      
     }
     return () => {
       setCurrentConversation(null);
@@ -38,20 +42,29 @@ export const ChatWindow: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+ 
+  useEffect(() => {
   const getOtherParticipant = () => {
     if (!currentConversation?.participants) return null;
-    return currentConversation.participants.find((p) => p.id !== user?.id) || currentConversation.participants[0];
+    setCurrentUser(currentConversation.participants[1]);
+
   };
+    getOtherParticipant();
+    
+  },[conversationId,currentConversation])
 
-  const other = getOtherParticipant();
 
+  
   const handleSend = async (content: string) => {
     if (conversationId) {
       await sendMessage(conversationId, content);
+      loadMessages(conversationId);
     }
   };
+  
+  
 
-  if (!conversationId) {
+  if (!conversationId || !other?._id) {
     return (
       <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-dark-bg">
         <div className="text-center">

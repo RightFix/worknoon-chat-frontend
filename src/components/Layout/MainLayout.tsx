@@ -6,6 +6,7 @@ import { useChat } from '../../contexts/ChatContext';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 
+
 export const MainLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const { loadConversations } = useChat();

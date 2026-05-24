@@ -55,10 +55,11 @@ const AdminDashboard: React.FC = () => {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     setUpdatingRoleId(userId);
+    
     try {
       const response = await userAPI.updateUserRole(userId, newRole);
       if (response.success && response.data) {
-        setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as UserType['role'] } : u));
+        setUsers(users.map(u => u._id === userId ? { ...u, role: newRole as UserType['role'] } : u));
         setEditingUserId(null);
       }
     } catch (error) {
@@ -201,7 +202,7 @@ const AdminDashboard: React.FC = () => {
                 </tr>
               ) : (
                 users.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-dark-input">
+                  <tr key={u._id} className="hover:bg-gray-50 dark:hover:bg-dark-input">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Avatar src={u.avatar} alt={u.username} size="sm" isOnline={u.isOnline} showStatus />
@@ -225,13 +226,13 @@ const AdminDashboard: React.FC = () => {
                       {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-4 py-3">
-                      {user?.role === 'admin' && u.id !== user.id && (
-                        editingUserId === u.id ? (
+                      {user?.role === 'admin' && u._id !== user.id && (
+                        editingUserId === u._id ? (
                           <div className="flex items-center gap-2">
                             <select
                               value={u.role}
-                              onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                              disabled={updatingRoleId === u.id}
+                              onChange={(e) => handleRoleChange(u._id || '', e.target.value)}
+                              disabled={updatingRoleId === u._id}
                               className="text-sm px-2 py-1 rounded border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-input text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-primary-500"
                             >
                               {roles.map((role) => (
@@ -243,14 +244,14 @@ const AdminDashboard: React.FC = () => {
                             <button
                               onClick={() => setEditingUserId(null)}
                               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                              disabled={updatingRoleId === u.id}
+                              disabled={updatingRoleId === u._id}
                             >
                               ✕
                             </button>
                           </div>
                         ) : (
                           <button
-                            onClick={() => setEditingUserId(u.id)}
+                            onClick={() => setEditingUserId(u._id || '')}
                             className="text-sm text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                           >
                             Edit Role

@@ -76,7 +76,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   return (
-    <div className="border-t border-gray-200 dark:border-dark-border bg-white dark:bg-dark-card p-4">
+    <div className="border-t border-gray-200 absolute bottom-0 left-0 right-0 dark:border-dark-border bg-white dark:bg-dark-card p-4">
       {attachments.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {attachments.map((file, index) => (
@@ -150,7 +150,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           <Send className="w-5 h-5" />
         </Button>
       </div>
-    </div>
+      </div>
   );
 };
 
