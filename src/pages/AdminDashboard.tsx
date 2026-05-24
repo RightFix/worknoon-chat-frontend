@@ -69,7 +69,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  if (!user || (user.role !== 'admin' && user.role !== 'agent')) {
+  if (!user || (user.role !== 'admin')) {
     return <Navigate to="/" replace />;
   }
 
