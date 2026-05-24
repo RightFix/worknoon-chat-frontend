@@ -56,9 +56,6 @@ cp .env.example .env
 # API URL (your Vercel backend URL)
 VITE_API_URL=https://your-backend.vercel.app
 
-# Pusher Configuration
-VITE_PUSHER_KEY=your-pusher-key
-VITE_PUSHER_CLUSTER=ap2
 ```
 
 5. Start the development server:
@@ -100,7 +97,7 @@ Or connect your GitHub repository to Vercel for automatic deployments.
 | Role | Access |
 |------|--------|
 | `admin` | Full admin dashboard, user management |
-| `agent` | Admin dashboard, respond to customers |
+| `agent` | Chat with customers |
 | `customer` | Chat with agents, merchants, designers |
 | `designer` | Chat with customers |
 | `merchant` | Chat with customers |
@@ -130,11 +127,6 @@ Dark Mode:
 ```
 
 ## Challenges & Solutions
-
-### Real-time on Serverless
-**Challenge**: Vercel serverless functions don't support persistent WebSocket connections.
-
-**Solution**: Use Pusher-js client which maintains WebSocket connections independently from the server. It seamlessly handles connection drops and reconnections.
 
 ### Offline Support
 **Challenge**: Users may lose internet connectivity while sending messages.
@@ -180,7 +172,7 @@ src/
 │   └── ChatContext.tsx
 ├── services/
 │   ├── api.ts
-│   └── pusher.ts
+│   └── socket.ts
 ├── types/
 │   └── index.ts
 ├── pages/
@@ -204,11 +196,6 @@ Provides dark/light mode toggle with system preference detection.
 
 ### ChatContext
 Centralized chat state management for conversations, messages, and real-time updates.
-
-### Pusher Integration
-- Subscribes to `user-{userId}` for personal notifications
-- Subscribes to `conversation-{id}` for chat room updates
-- Handles typing indicators and read receipts
 
 ## License
 
