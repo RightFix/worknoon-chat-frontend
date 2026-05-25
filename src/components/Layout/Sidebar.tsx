@@ -28,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { path: '/settings', icon: Settings, label: 'Settings' },
   ];
 
-  const links = user?.role === 'admin' || user?.role === 'agent' ? adminLinks : userLinks;
+  const links = user?.role === 'admin' ? adminLinks : userLinks;
 
   const getOtherParticipant = (participants: any[]) => {
     return participants.find((p) => p._id !== user?.id) || participants[0];
