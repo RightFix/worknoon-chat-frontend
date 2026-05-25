@@ -2,6 +2,8 @@
 
 Real-time chat system frontend for eCommerce platforms. Enables communication between buyers, merchants, designers, and customer support agents.
 
+The app will be available at `https://worknoon-chat-frontend-xi.vercel.app`
+
 ## Features
 
 - User Authentication (Login/Register)
